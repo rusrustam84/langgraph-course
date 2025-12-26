@@ -33,5 +33,19 @@ def digest() -> VectorStoreRetriever:
 
     return vectorstore.as_retriever()
 
+def get_retriever():
+
+    embeddings = OpenAIEmbeddings(
+        model="text-embedding-3-small",
+        show_progress_bar=False,
+        chunk_size=50,
+        retry_min_seconds=10,
+    )
+
+    return PineconeVectorStore(index_name="langchain-rag-index", embedding=embeddings).as_retriever()
+
+
+
 if __name__ == "__main__":
-    digest()
+    # digest()
+    get_retriever()
