@@ -13,16 +13,18 @@ The following diagram illustrates the workflow of the system:
 ![Process Flow](graph.png)
 
 ### Workflow Steps:
-1.  **Retrieve**: Fetches relevant documents from a Pinecone vector store based on the user's question.
-2.  **Grade Documents**: Evaluates the relevance of each retrieved document. If any document is found irrelevant, the system flags the need for a web search.
-3.  **Decide to Generate**: 
+1.  **Router**: The entry point that decides whether to go to **Retrieve** (local knowledge base) or **Web Search** (external search) based on the question.
+2.  **Retrieve**: Fetches relevant documents from a Pinecone vector store if the router directs here.
+3.  **Grade Documents**: Evaluates the relevance of each retrieved document. If any document is found irrelevant, the system flags the need for a web search.
+4.  **Decide to Generate**: 
     *   If all documents are relevant, it proceeds to **Generate**.
     *   If any document is irrelevant, it proceeds to **Web Search**.
-4.  **Web Search**: Uses the Tavily search engine to find additional information online, which is then added to the document collection.
-5.  **Generate**: Uses an LLM to generate an answer based on the collected documents and the question.
-6.  **Grade Generation**:
-    *   **Hallucination Grader**: Checks if the generation is grounded in the provided documents. If not, it re-runs the generation.
-    *   **Answer Grader**: Checks if the generation actually addresses the user's question. If it's grounded but doesn't answer the question, it performs a web search to find better information.
+5.  **Web Search**: Uses the Tavily search engine to find additional information online, which is then added to the document collection.
+6.  **Generate**: Uses an LLM to generate an answer based on the collected documents and the question.
+7.  **Grade Generation**:
+    *   **Hallucination Grader**: Checks if the generation is grounded in the provided documents.
+    *   **Answer Grader**: Checks if the generation actually addresses the user's question.
+    *   **Loop Control**: To prevent infinite loops, the system tracks `search_count`. If the answer is still not ideal after 1 web search iteration, it terminates and returns the best available answer.
 
 ## Project Structure
 

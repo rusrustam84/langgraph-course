@@ -7,4 +7,4 @@ def retrieve(state: GraphState) -> Dict[str, Any]:
 
     question = state["question"]
     documents = get_retriever().invoke(question)
-    return {"documents": documents, "question": question}
+    return {"documents": documents, "question": question, "search_count": state.get("search_count", 0)}
